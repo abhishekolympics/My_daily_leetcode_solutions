@@ -1,0 +1,77 @@
+// #include <iostream>
+// #include <map>
+
+// void printMap(map<double,vector<int>>mp) {
+//     // Loop through the map using a range-based for loop for cleaner syntax
+//     for (const auto& [key, value] : mp) {
+//         cout << key << ": " << value[0]<<" "<< value[1] << endl;
+//     }
+// }
+
+// class Solution {
+// public:
+
+
+//     vector<int> kthSmallestPrimeFraction(vector<int>& arr, int k) {
+//         map<double,vector<int>>mp;
+//         for(int i=0;i<arr.size()-1;i++)
+//         {
+//             for(int j=i+1;j<arr.size();j++)
+//             {
+//                 double val=(float)arr[i]/arr[j];
+//                 vector<int>v1{arr[i],arr[j]};
+//                 mp[val]=v1;
+//             }
+//         }
+//         printMap(mp);
+//         auto it = mp.begin();
+//          it = std::next(it, k-1);
+
+//         if (it != mp.end()) {
+//             cout << "Key of the 3rd element (considering sorted order): " << it->second[0]<<" "<<it->second[1] << endl;
+//         } else {
+//             cout << "Map doesn't have enough elements." << endl;
+//         }
+//         return {it->second[0],it->second[1]};
+//     }
+// };
+
+class Solution {
+public:
+    vector<int> kthSmallestPrimeFraction(vector<int>& arr, int k) {
+        int n = arr.size();
+        double left = 0, right = 1, mid;
+        vector<int> res;
+
+        while (left <= right) {
+            mid = left + (right - left) / 2;
+            int j = 1, total = 0, num = 0, den = 0;
+            double maxFrac = 0;
+            for (int i = 0; i < n; ++ i) {
+                while (j < n && arr[i] >= arr[j] * mid) {
+                    ++j;
+                }
+                
+                total += n - j;
+
+                if (j < n && maxFrac < arr[i] * 1.0 / arr[j]) {
+                    maxFrac = arr[i] * 1.0 / arr[j];
+                    num = i; den = j;
+                }
+            }
+
+            if (total == k) {
+                res = {arr[num], arr[den]};
+                break;
+            }
+
+            if (total > k) {
+                right = mid;
+            } else {
+                left = mid;
+            }
+        }
+
+        return res;
+    }
+};
